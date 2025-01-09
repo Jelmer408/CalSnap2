@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111827" />
+    <meta name="description" content="Track your daily calorie intake" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icon.png" />
+    <title>Calorie Tracker</title>
+    
+    <!-- iOS Splash Screen -->
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash-screen.png"
+      media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"
+    />
+    
+    <style>
+      #splash-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #111827;
+        z-index: 9999;
+        transition: opacity 0.3s ease-out;
+      }
+      #splash-screen.hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #splash-screen img {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 24px;
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: .8;
+          transform: scale(0.95);
+        }
+      }
+      .splash-loader {
+        width: 200px;
+        height: 3px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .splash-loader::after {
+        content: '';
+        display: block;
+        width: 40%;
+        height: 100%;
+        background: #3b82f6;
+        border-radius: 999px;
+        animation: loading 1.5s ease-in-out infinite;
+      }
+      @keyframes loading {
+        0% {
+          transform: translateX(-150%);
+        }
+        50% {
+          transform: translateX(100%);
+        }
+        100% {
+          transform: translateX(350%);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="splash-screen">
+      <img src="/icon.png" alt="App Logo" />
+      <div class="splash-loader"></div>
+    </div>
+    
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          document.getElementById('splash-screen').classList.add('hide');
+          setTimeout(() => {
+            document.getElementById('splash-screen').remove();
+          }, 300);
+        }, 2000);
+      });
+    </script>
+  </body>
+</html>
