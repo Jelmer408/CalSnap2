@@ -5,7 +5,15 @@ import { validateGeminiResponse } from './validators/responseValidators';
 
 export async function analyzeFoodImage(imageData: string): Promise<FoodAnalysis | null> {
   try {
-    const base64Image = imageData.includes(',') ? imageData.split(',')[1] : imageData;
+    // Ensure we have a proper base64 string
+    const base64Image = imageData.includes(',') 
+      ? imageData.split(',')[1] 
+      : imageData;
+
+    // Validate base64 data
+    if (!base64Image || base64Image.trim() === '') {
+      throw new Error('Invalid image data');
+    }
 
     const result = await model.generateContent([
       {

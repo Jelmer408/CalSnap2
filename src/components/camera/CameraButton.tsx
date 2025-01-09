@@ -23,8 +23,12 @@ export function CameraButton({ disabled, onCapture, className }: CameraButtonPro
       input.onchange = async (e) => {
         const file = (e.target as HTMLInputElement).files?.[0];
         if (file) {
-          const imageData = await handleCapture(file);
-          await onCapture(imageData);
+          try {
+            const imageData = await handleCapture(file);
+            await onCapture(imageData);
+          } catch (error) {
+            console.error('Error processing captured image:', error);
+          }
         }
       };
 

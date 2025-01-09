@@ -31,7 +31,12 @@ export function useCamera(): UseCameraResult {
         reader.onloadend = () => {
           const result = reader.result;
           if (typeof result === 'string') {
-            resolve(result);
+            // Ensure we're getting a proper base64 string
+            if (!result.startsWith('data:image/')) {
+              resolve(`data:${file.type};base64,${result.split(',')[1] || result}`);
+            } else {
+              resolve(result);
+            }
           } else {
             reject(new Error('Failed to read image file'));
           }

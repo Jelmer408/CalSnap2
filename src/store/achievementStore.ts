@@ -34,23 +34,42 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
+      // Load achievements
+      const { data: achievementsData, error: achievementsError } = await supabase
         .from('user_achievements')
         .select('*')
         .eq('user_id', user.id)
         .order('unlocked_at', { ascending: false });
 
-      if (error) throw error;
+      if (achievementsError) throw achievementsError;
 
-      const unlockedAchievements = data.map(record => ({
+      // Load streak data
+      const { data: streakData, error: streakError } = await supabase
+        .from('user_streaks')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (streakError && streakError.code !== 'PGRST116') throw streakError;
+
+      const unlockedAchievements = achievementsData.map(record => ({
         ...achievements.find(a => a.id === record.achievement_id)!,
         unlockedAt: record.unlocked_at
       })).filter(Boolean);
 
       set({
         unlockedAchievements,
-        points: data.reduce((sum, a) => sum + a.points, 0),
-        level: Math.floor(data.reduce((sum, a) => sum + a.points, 0) / 100) + 1
+        points: achievementsData.reduce((sum, a) => sum + a.points, 0),
+        level: Math.floor(achievementsData.reduce((sum, a) => sum + a.points, 0) / 100) + 1,
+        streak: streakData ? {
+          current: streakData.current_streak,
+          longest: streakData.longest_streak,
+          lastLogDate: streakData.last_log_date
+        } : {
+          current: 0,
+          longest: 0,
+          lastLogDate: ''
+        }
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to load achievements';
@@ -60,7 +79,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
       set({ loading: false });
     }
   },
-  
+
   checkAchievements: async () => {
     try {
       set({ error: null });
@@ -115,45 +134,30 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
       console.error('Error checking achievements:', error);
     }
   },
-  
+
   updateStreak: async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const today = new Date().toDateString();
-      const lastLog = new Date(get().streak.lastLogDate).toDateString();
-      const yesterday = new Date(Date.now() - 86400000).toDateString();
-      
-      let newStreak;
-      if (today === lastLog) return;
-      
-      if (lastLog === yesterday) {
-        const current = get().streak.current + 1;
-        newStreak = {
-          current,
-          longest: Math.max(current, get().streak.longest),
-          lastLogDate: today
-        };
-      } else {
-        newStreak = {
-          current: 1,
-          longest: get().streak.longest,
-          lastLogDate: today
-        };
-      }
-
-      const { error } = await supabase
+      // Get latest streak data
+      const { data: streakData, error: streakError } = await supabase
         .from('user_streaks')
-        .upsert({
-          user_id: user.id,
-          current_streak: newStreak.current,
-          longest_streak: newStreak.longest,
-          last_log_date: new Date().toISOString()
-        });
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
 
-      if (error) throw error;
-      set({ streak: newStreak });
+      if (streakError && streakError.code !== 'PGRST116') throw streakError;
+
+      if (streakData) {
+        set({
+          streak: {
+            current: streakData.current_streak,
+            longest: streakData.longest_streak,
+            lastLogDate: streakData.last_log_date
+          }
+        });
+      }
     } catch (error) {
       console.error('Error updating streak:', error);
     }
