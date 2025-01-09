@@ -34,7 +34,7 @@ export function ShareButton({ entries, dailyGoal }: ShareButtonProps) {
           await navigator.share({
             files: [file],
             title: 'My Daily Meals',
-            text: 'Check out my meals for today!'
+            text: 'One step closer to my eating goals!  Feeling great about my food choices today.  What are you eating?  Lets inspire each other! ✨ #CalSnap #gym #foodlogging'
           });
           showToast('Meals shared successfully!');
         } catch (shareError) {
