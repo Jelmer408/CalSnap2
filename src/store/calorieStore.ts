@@ -64,8 +64,25 @@ export const useCalorieStore = create<CalorieState>((set, get) => ({
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      // Get emoji before database insertion
       const emoji = await getFoodEmoji(entry.name);
       
+      // Optimistically update the UI
+      const optimisticEntry = {
+        id: crypto.randomUUID(), // Temporary ID
+        ...entry,
+        emoji
+      };
+
+      set(state => ({
+        entries: [optimisticEntry, ...state.entries],
+        recentItems: [
+          entry.name,
+          ...state.recentItems.filter(item => item !== entry.name)
+        ].slice(0, 5)
+      }));
+
+      // Insert into database
       const { data, error } = await supabase
         .from('calorie_entries')
         .insert([{
@@ -78,14 +95,17 @@ export const useCalorieStore = create<CalorieState>((set, get) => ({
 
       if (error) throw error;
 
+      // Update with actual database entry
       set(state => ({
-        entries: [data, ...state.entries],
-        recentItems: [
-          entry.name,
-          ...state.recentItems.filter(item => item !== entry.name)
-        ].slice(0, 5)
+        entries: [
+          data,
+          ...state.entries.filter(e => e.id !== optimisticEntry.id)
+        ]
       }));
+
     } catch (error) {
+      // Revert optimistic update on error
+      await get().loadEntries();
       console.error('Error adding entry:', error);
       throw error;
     }

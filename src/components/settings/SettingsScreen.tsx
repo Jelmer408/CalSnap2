@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { RotateCcw } from 'lucide-react';
 import { UserMetricsSection } from './UserMetricsSection';
@@ -9,9 +9,11 @@ import { useCalorieStore } from '../../store/calorieStore';
 import { useSettingsStore } from '../../store/settingsStore';
 import { calculateCalories } from '../../lib/gemini/calculateCalories';
 import { useToastContext } from '../../providers/ToastProvider';
+import { useFitnessStore } from '../../store/fitnessStore';
 
 export function SettingsScreen() {
   const { dailyGoal, setDailyGoal } = useCalorieStore();
+  const { getCurrentWeight } = useFitnessStore();
   const {
     metrics,
     activityLevel,
@@ -21,11 +23,31 @@ export function SettingsScreen() {
     updateActivityLevel,
     updateGoalType,
     updateWeightRate,
-    resetSettings
+    resetSettings,
+    syncWithSupabase
   } = useSettingsStore();
   
   const [isCalculating, setIsCalculating] = useState(false);
   const { showToast } = useToastContext();
+
+  // Sync with Supabase on mount
+  useEffect(() => {
+    syncWithSupabase().catch(error => {
+      console.error('Error syncing settings:', error);
+      showToast('Failed to load settings', 'error');
+    });
+  }, []);
+
+  // Update weight when current weight changes
+  useEffect(() => {
+    const currentWeight = getCurrentWeight();
+    if (currentWeight && currentWeight !== metrics.weight) {
+      updateMetrics({ weight: currentWeight }).catch(error => {
+        console.error('Error updating weight:', error);
+        showToast('Failed to update weight', 'error');
+      });
+    }
+  }, [getCurrentWeight, metrics.weight]);
 
   const handleCalculate = async () => {
     setIsCalculating(true);
@@ -50,10 +72,15 @@ export function SettingsScreen() {
     setDailyGoal(dailyGoal + amount);
   };
 
-  const handleReset = () => {
-    resetSettings();
-    setDailyGoal(2000);
-    showToast('Settings reset to defaults');
+  const handleReset = async () => {
+    try {
+      await resetSettings();
+      setDailyGoal(2000);
+      showToast('Settings reset to defaults');
+    } catch (error) {
+      showToast('Failed to reset settings', 'error');
+      console.error('Error resetting settings:', error);
+    }
   };
 
   return (

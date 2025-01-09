@@ -10,6 +10,7 @@ import { useSwipeNavigation } from '../../hooks/useSwipeNavigation';
 import { useCalorieSync } from '../../hooks/useCalorieSync';
 import { formatCalories } from '../../lib/utils';
 import { MealType, MEAL_TYPES } from '../../types/meals';
+import { ShareButton } from '../ShareButton';
 import { isSameDay } from 'date-fns';
 
 export function HomeTab() {
@@ -95,6 +96,11 @@ export function HomeTab() {
             onDelete={removeEntry}
           />
         ))}
+
+        <ShareButton 
+          entries={dateEntries} 
+          dailyGoal={dailyGoal}
+        />
       </div>
     </div>
   );
