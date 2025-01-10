@@ -6,12 +6,13 @@ export function UserMetricsSection() {
   const { metrics, updateMetrics, syncWithSupabase } = useSettingsStore();
   const { showToast } = useToastContext();
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState<string | null>(null);
 
   // Local state to handle input values
   const [localMetrics, setLocalMetrics] = useState({
-    weight: metrics.weight ? metrics.weight.toString() : '',
-    height: metrics.height ? metrics.height.toString() : '',
-    age: metrics.age ? metrics.age.toString() : ''
+    weight: '',
+    height: '',
+    age: ''
   });
 
   useEffect(() => {
@@ -30,20 +31,49 @@ export function UserMetricsSection() {
       }
     };
 
-    fetchData();
-  }, [syncWithSupabase, metrics, showToast]);
+    if (!isEditing) {
+      fetchData();
+    }
+  }, [syncWithSupabase, metrics, showToast, isEditing]);
+
+  // Handle input focus
+  const handleFocus = (field: string) => {
+    setIsEditing(field);
+    setLocalMetrics(prev => ({
+      ...prev,
+      [field]: ''
+    }));
+  };
 
   // Handle input changes
-  const handleInputChange = async (field: keyof typeof localMetrics, value: string) => {
+  const handleInputChange = (field: keyof typeof localMetrics, value: string) => {
     setLocalMetrics(prev => ({ ...prev, [field]: value }));
-    
-    // Only update the store if the value is valid
-    if (value && !isNaN(Number(value))) {
-      try {
-        await updateMetrics({ [field]: Number(value) });
-      } catch (error) {
-        showToast('Failed to update metric', 'error');
+  };
+
+  // Handle input blur
+  const handleBlur = async (field: keyof typeof localMetrics) => {
+    if (!localMetrics[field]) {
+      setIsEditing(null);
+      return;
+    }
+
+    try {
+      const numValue = Number(localMetrics[field]);
+      if (!isNaN(numValue)) {
+        await updateMetrics({ [field]: numValue });
+        showToast('Updated successfully', 'success');
       }
+    } catch (error) {
+      showToast('Failed to update metric', 'error');
+    } finally {
+      setIsEditing(null);
+    }
+  };
+
+  // Handle key press (Enter)
+  const handleKeyPress = (e: React.KeyboardEvent, field: keyof typeof localMetrics) => {
+    if (e.key === 'Enter') {
+      (e.target as HTMLInputElement).blur();
     }
   };
 
@@ -65,8 +95,11 @@ export function UserMetricsSection() {
             <input
               type="number"
               inputMode="decimal"
-              value={localMetrics.weight}
+              value={isEditing === 'weight' ? localMetrics.weight : (metrics.weight || '')}
               onChange={(e) => handleInputChange('weight', e.target.value)}
+              onFocus={() => handleFocus('weight')}
+              onBlur={() => handleBlur('weight')}
+              onKeyPress={(e) => handleKeyPress(e, 'weight')}
               className="w-20 text-right bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg px-2 py-1"
               placeholder="0"
             />
@@ -88,8 +121,11 @@ export function UserMetricsSection() {
             <input
               type="number"
               inputMode="decimal"
-              value={localMetrics.height}
+              value={isEditing === 'height' ? localMetrics.height : (metrics.height || '')}
               onChange={(e) => handleInputChange('height', e.target.value)}
+              onFocus={() => handleFocus('height')}
+              onBlur={() => handleBlur('height')}
+              onKeyPress={(e) => handleKeyPress(e, 'height')}
               className="w-20 text-right bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg px-2 py-1"
               placeholder="0"
             />
@@ -111,8 +147,11 @@ export function UserMetricsSection() {
             <input
               type="number"
               inputMode="numeric"
-              value={localMetrics.age}
+              value={isEditing === 'age' ? localMetrics.age : (metrics.age || '')}
               onChange={(e) => handleInputChange('age', e.target.value)}
+              onFocus={() => handleFocus('age')}
+              onBlur={() => handleBlur('age')}
+              onKeyPress={(e) => handleKeyPress(e, 'age')}
               className="w-20 text-right bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg px-2 py-1"
               placeholder="0"
             />
