@@ -1,5 +1,5 @@
 // Service Worker version - increment this with each deployment
-const SW_VERSION = '1.0.4';
+const SW_VERSION = '1.0.3';
 const CACHE_NAME = `calsnap-${SW_VERSION}`;
 
 // Assets to cache
