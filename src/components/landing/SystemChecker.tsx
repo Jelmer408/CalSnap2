@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Check, X, AlertTriangle } from 'lucide-react';
+import { Check, X, AlertTriangle, Smartphone, Globe, Shield } from 'lucide-react';
 
 interface SystemCheckerProps {
   isCompatible: boolean;
@@ -8,50 +8,57 @@ interface SystemCheckerProps {
 
 export function SystemChecker({ isCompatible, browser }: SystemCheckerProps) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
-      <h2 className="text-xl font-semibold mb-6">System Compatibility Check</h2>
-      
-      <div className="space-y-4">
-        {/* PWA Support */}
-        <div className="flex items-center justify-between">
-          <span>PWA Support</span>
-          {isCompatible ? (
-            <div className="flex items-center space-x-2 text-green-500">
-              <Check className="w-5 h-5" />
-              <span>Supported</span>
+    <div className="max-w-2xl mx-auto">
+      <div className="grid gap-6 md:grid-cols-2">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg"
+        >
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+              <Smartphone className="w-6 h-6 text-blue-500" />
             </div>
-          ) : (
-            <div className="flex items-center space-x-2 text-red-500">
-              <X className="w-5 h-5" />
-              <span>Not Supported</span>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Device Support</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Works on all modern devices</p>
             </div>
-          )}
-        </div>
-
-        {/* Browser Compatibility */}
-        <div className="flex items-center justify-between">
-          <span>Browser Compatibility</span>
-          {browser === 'chrome' || browser === 'safari' ? (
-            <div className="flex items-center space-x-2 text-green-500">
-              <Check className="w-5 h-5" />
-              <span>Compatible</span>
-            </div>
-          ) : (
-            <div className="flex items-center space-x-2 text-yellow-500">
-              <AlertTriangle className="w-5 h-5" />
-              <span>Limited Support</span>
-            </div>
-          )}
-        </div>
-
-        {/* Storage */}
-        <div className="flex items-center justify-between">
-          <span>Required Storage</span>
-          <div className="flex items-center space-x-2 text-green-500">
-            <Check className="w-5 h-5" />
-            <span>50MB Available</span>
           </div>
-        </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg"
+        >
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
+              <Globe className="w-6 h-6 text-purple-500" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Browser Support</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Chrome and Safari supported</p>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg md:col-span-2"
+        >
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
+              <Shield className="w-6 h-6 text-green-500" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Privacy & Security</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Your data is securely stored and never shared</p>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </div>
   );

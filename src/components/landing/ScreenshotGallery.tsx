@@ -1,69 +1,48 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const screenshots = [
-  { src: '/screenshots/home.png', alt: 'Home Screen' },
-  { src: '/screenshots/meal-log.png', alt: 'Meal Logging' },
-  { src: '/screenshots/progress.png', alt: 'Progress Tracking' },
-  { src: '/screenshots/achievements.png', alt: 'Achievements' },
+  {
+    src: '/screenshots/preview-1.png',
+    alt: 'Track your daily calories',
+    title: 'Track Daily Calories'
+  },
+  {
+    src: '/screenshots/preview-2.png',
+    alt: 'AI-powered food recognition',
+    title: 'Smart Food Recognition'
+  },
+  {
+    src: '/screenshots/preview-3.png',
+    alt: 'Achievement system',
+    title: 'Earn Achievements'
+  },
+  {
+    src: '/screenshots/preview-4.png',
+    alt: 'Progress tracking',
+    title: 'Track Progress'
+  }
 ];
 
 export function ScreenshotGallery() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const nextSlide = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex === screenshots.length - 1 ? 0 : prevIndex + 1
-    );
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex === 0 ? screenshots.length - 1 : prevIndex - 1
-    );
-  };
-
   return (
-    <div className="relative w-full max-w-2xl mx-auto">
-      <div className="aspect-w-9 aspect-h-16 bg-gray-200 dark:bg-gray-800 rounded-2xl overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={currentIndex}
-            src={screenshots[currentIndex].src}
-            alt={screenshots[currentIndex].alt}
-            className="object-cover w-full h-full"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          />
-        </AnimatePresence>
-      </div>
-      
-      <button
-        onClick={prevSlide}
-        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 p-2 rounded-full shadow-lg"
-      >
-        <ChevronLeft className="w-6 h-6 text-gray-800 dark:text-white" />
-      </button>
-      
-      <button
-        onClick={nextSlide}
-        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 p-2 rounded-full shadow-lg"
-      >
-        <ChevronRight className="w-6 h-6 text-gray-800 dark:text-white" />
-      </button>
-      
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-        {screenshots.map((_, index) => (
-          <button
+    <div className="overflow-hidden">
+      <div className="flex overflow-x-auto gap-4 pb-8 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
+        {screenshots.map((screenshot, index) => (
+          <motion.div
             key={index}
-            onClick={() => setCurrentIndex(index)}
-            className={`w-2 h-2 rounded-full ${
-              index === currentIndex ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
-            }`}
-          />
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="flex-none w-[280px] snap-center"
+          >
+            <div className="relative w-full aspect-[9/16] rounded-3xl overflow-hidden bg-gray-100 dark:bg-gray-800">
+              <img
+                src={screenshot.src}
+                alt={screenshot.alt}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </motion.div>
         ))}
       </div>
     </div>

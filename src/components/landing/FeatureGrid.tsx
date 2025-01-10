@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Activity, Zap, Calendar, Trophy, Camera, ChefHat } from 'lucide-react';
 
 const features = [
