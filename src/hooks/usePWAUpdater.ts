@@ -30,7 +30,7 @@ export function usePWAUpdater() {
             }
           });
 
-          // Check for updates every 30 minutes
+          // Check for updates every minute
           const checkForUpdates = async () => {
             try {
               await registration.update();
@@ -43,9 +43,18 @@ export function usePWAUpdater() {
               );
 
               messageChannel.port1.onmessage = (event) => {
-                if (event.data.type === 'VERSION' && event.data.version !== '1.0.3') {
-                  showToast('Updating to the latest version...', 'info');
-                  window.location.reload();
+                if (event.data.type === 'VERSION') {
+                  const currentVersion = event.data.version;
+                  // Compare with the version in the service worker file
+                  fetch('/sw.js')
+                    .then(response => response.text())
+                    .then(text => {
+                      const match = text.match(/SW_VERSION\s*=\s*['"]([^'"]*)['"]/);
+                      if (match && match[1] !== currentVersion) {
+                        showToast('Updating to the latest version...', 'info');
+                        window.location.reload();
+                      }
+                    });
                 }
               };
             } catch (error) {
@@ -57,7 +66,7 @@ export function usePWAUpdater() {
           checkForUpdates();
           
           // Set up periodic checks
-          setInterval(checkForUpdates, 30 * 60 * 1000); // 30 minutes
+          setInterval(checkForUpdates, 60 * 1000); // Check every minute
 
           // Listen for the controlling service worker changing
           navigator.serviceWorker.addEventListener('controllerchange', () => {

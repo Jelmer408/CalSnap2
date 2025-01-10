@@ -2,7 +2,7 @@
   "name": "CalSnap",
   "short_name": "CalSnap",
   "description": "Track your daily calorie intake with AI-powered food recognition. Achieve your fitness goals with CalSnap.",
-  "version": "1.5.5",
+  "version": "1.5.6",
   "id": "calsnap-pwa",
   "display_override": [
     "window-controls-overlay"

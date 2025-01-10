@@ -1,5 +1,5 @@
 // Service Worker version - increment this with each deployment
-const SW_VERSION = '1.0.6';
+const SW_VERSION = '1.5.6';
 const CACHE_NAME = `calsnap-${SW_VERSION}`;
 
 // Assets to cache
@@ -95,37 +95,5 @@ self.addEventListener('message', (event) => {
       type: 'VERSION',
       version: SW_VERSION
     });
-  }
-});
-
-// Handle push notifications
-self.addEventListener('push', (event) => {
-  if (event.data) {
-    const data = event.data.json();
-    const options = {
-      body: data.body,
-      icon: '/icon.png',
-      badge: '/icon.png',
-      data: data.url,
-      actions: [
-        { action: 'open', title: 'Open App' },
-        { action: 'close', title: 'Close' }
-      ]
-    };
-
-    event.waitUntil(
-      self.registration.showNotification('CalSnap Update', options)
-    );
-  }
-});
-
-// Handle notification clicks
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-
-  if (event.action === 'open') {
-    event.waitUntil(
-      clients.openWindow(event.notification.data || '/')
-    );
   }
 });

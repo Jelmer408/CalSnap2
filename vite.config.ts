@@ -11,7 +11,7 @@ export default defineConfig({
         name: "Calorie Tracker",
         short_name: "CalSnap",
         description: "Track your daily calorie intake",
-        version: "1.0.2",
+        version: "1.5.6",
         start_url: "/",
         display: "standalone",
         background_color: "#111827",
@@ -35,6 +35,8 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         navigateFallback: 'index.html',
         navigateFallbackAllowlist: [/^(?!\/__).*/],
+        skipWaiting: true,
+        clientsClaim: true,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -77,10 +79,5 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
     sourcemap: true
-  },
-  resolve: {
-    alias: {
-      '@': '/src'
-    }
   }
 });
