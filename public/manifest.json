@@ -1,8 +1,9 @@
 {
       "name": "CalSnap",
       "short_name": "CalSnap",
-      "description": "Track your daily calorie intake",
-      "version": "1.5.1",
+      "description": "Track your daily calorie intake with AI-powered food recognition. Achieve your fitness goals with CalSnap.",
+      "version": "1.6.1",
+      "id": "calsnap-pwa",
       "start_url": "/",
       "display": "standalone",
       "background_color": "#111827",
@@ -33,10 +34,12 @@
         "food"
       ],
       "dir": "auto",
+      "lang": "en-US",
+      "orientation": "portrait",
       "iarc_rating_id": "e1948f0e-9507-478e-b75e-944c77d97452",
-      "lang": "en",
       "prefer_related_applications": false,
       "related_applications": [],
       "scope": "/",
-      "scope_extensions": []
+      "scope_extensions": [],
+      "screenshots": []
     }
