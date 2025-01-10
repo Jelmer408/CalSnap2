@@ -34,7 +34,7 @@ export function ShareButton({ entries, dailyGoal }: ShareButtonProps) {
           await navigator.share({
             files: [file],
             title: 'My Daily Meals',
-            text: 'One step closer to my eating goals!  Feeling great about my food choices today.  What are you eating?  Lets inspire each other! ✨ #CalSnap #gym #foodlogging'
+            text: 'One step closer to my eating goals!  Feeling great about my food choices today. What are you eating?  Lets inspire each other! ✨ #CalSnap #gym #foodlogging'
           });
           showToast('Meals shared successfully!');
         } catch (shareError) {
@@ -64,7 +64,7 @@ export function ShareButton({ entries, dailyGoal }: ShareButtonProps) {
   };
 
   return (
-    <div className="mt-6 flex justify-end">
+    <div className="mt-6 flex justify-center">
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
