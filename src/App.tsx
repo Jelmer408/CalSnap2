@@ -11,6 +11,7 @@ import { AuthProvider } from './providers/AuthProvider';
 import { Header } from './components/Header';
 import { AuthForm } from './components/auth/AuthForm';
 import { useAuth } from './providers/AuthProvider';
+import { InstallDrawer } from './components/pwa/InstallDrawer';
 import { useState } from 'react';
 
 function AppContent() {
@@ -49,6 +50,8 @@ function AppContent() {
           onClose={clearAchievement}
         />
       )}
+
+      <InstallDrawer />
     </div>
   );
 }
