@@ -5,14 +5,33 @@ export function usePWAUpdater() {
   const { showToast } = useToastContext();
 
   useEffect(() => {
-    const checkForUpdates = async () => {
+    let refreshing = false;
+
+    const handleServiceWorkerUpdate = async () => {
       if ('serviceWorker' in navigator) {
         try {
           // Get the registration
           const registration = await navigator.serviceWorker.ready;
 
-          // Check if there's an update
-          const checkUpdate = async () => {
+          // Add listener for new service worker installation
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            if (newWorker) {
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  showToast('A new version is available! Updating...', 'info');
+                  
+                  // Automatically update after a short delay
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 1000);
+                }
+              });
+            }
+          });
+
+          // Check for updates every 30 minutes
+          const checkForUpdates = async () => {
             try {
               await registration.update();
               
@@ -24,8 +43,9 @@ export function usePWAUpdater() {
               );
 
               messageChannel.port1.onmessage = (event) => {
-                if (event.data.type === 'VERSION' && event.data.version !== '1.0.1') {
-                  showToast('A new version is available. Please refresh to update.', 'info');
+                if (event.data.type === 'VERSION' && event.data.version !== '1.0.3') {
+                  showToast('Updating to the latest version...', 'info');
+                  window.location.reload();
                 }
               };
             } catch (error) {
@@ -33,24 +53,37 @@ export function usePWAUpdater() {
             }
           };
 
-          // Check for updates immediately and then every 30 minutes
-          checkUpdate();
-          setInterval(checkUpdate, 30 * 60 * 1000);
+          // Initial check
+          checkForUpdates();
+          
+          // Set up periodic checks
+          setInterval(checkForUpdates, 30 * 60 * 1000); // 30 minutes
 
           // Listen for the controlling service worker changing
-          let refreshing = false;
           navigator.serviceWorker.addEventListener('controllerchange', () => {
             if (!refreshing) {
               refreshing = true;
               window.location.reload();
             }
           });
+
+          // Listen for messages from the service worker
+          navigator.serviceWorker.addEventListener('message', (event) => {
+            if (event.data.type === 'SW_ACTIVATED') {
+              showToast(`Updated to version ${event.data.version}`, 'success');
+            }
+          });
+
         } catch (error) {
           console.error('Error setting up service worker:', error);
         }
       }
     };
 
-    checkForUpdates();
+    handleServiceWorkerUpdate();
+
+    return () => {
+      refreshing = false;
+    };
   }, [showToast]);
 }

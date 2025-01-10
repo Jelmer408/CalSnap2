@@ -102,6 +102,8 @@ export function LandingPage() {
             className="max-w-3xl mx-auto mt-12 text-center px-4 space-y-4"
           >
             <p className="text-white text-lg leading-relaxed">
+              Tired of tedious calorie counting? 
+              <br/>
               Meet <strong className="text-blue-400">CalSnap</strong>, your new AI-powered food tracking buddy! 
               <br/>
               Snap a pic, and let our smart tech log your meals in a flash. 📸
@@ -110,11 +112,12 @@ export function LandingPage() {
               But that's not all! 
               <br/>
               Smash your fitness goals with personalized meal plans, fun achievements, and insightful progress reports. 
+              <br/>
+              Stay motivated with streaks, level up your nutrition game, and watch those gains (or losses!) roll in.
             </p>
             <p className="text-white text-lg leading-relaxed">
-              Stay motivated with streaks, level up your nutrition game, and watch those gains (or losses!) roll in.
-              </p>
-						<p className="text-white text-lg leading-relaxed">
+              Whether you're a meal prep master or a grab-and-go guru, CalSnap makes healthy living a breeze. 
+              <br/>
               Join the CalSnap fam and turn your fitness journey into an epic adventure! 🎉
             </p>
           </motion.div>

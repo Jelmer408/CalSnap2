@@ -1,5 +1,5 @@
 // Service Worker version - increment this with each deployment
-const SW_VERSION = '1.0.1';
+const SW_VERSION = '1.0.3';
 const CACHE_NAME = `calsnap-${SW_VERSION}`;
 
 // Assets to cache
@@ -23,7 +23,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches and take control
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     Promise.all([
@@ -32,6 +32,7 @@ self.addEventListener('activate', (event) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (cacheName !== CACHE_NAME) {
+              console.log('Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }
           })
@@ -41,6 +42,16 @@ self.addEventListener('activate', (event) => {
       self.clients.claim()
     ])
   );
+
+  // After activation, notify all clients about the update
+  self.clients.matchAll().then(clients => {
+    clients.forEach(client => {
+      client.postMessage({
+        type: 'SW_ACTIVATED',
+        version: SW_VERSION
+      });
+    });
+  });
 });
 
 // Fetch event - network first, fallback to cache
@@ -51,9 +62,10 @@ self.addEventListener('fetch', (event) => {
   // Handle requests for pages
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request).catch(() => {
-        return caches.match('/index.html');
-      })
+      fetch(event.request)
+        .catch(() => {
+          return caches.match('/index.html');
+        })
     );
     return;
   }
@@ -76,12 +88,44 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Listen for version update messages
+// Listen for version check messages
 self.addEventListener('message', (event) => {
   if (event.data.type === 'CHECK_VERSION') {
     event.ports[0].postMessage({
       type: 'VERSION',
       version: SW_VERSION
     });
+  }
+});
+
+// Handle push notifications
+self.addEventListener('push', (event) => {
+  if (event.data) {
+    const data = event.data.json();
+    const options = {
+      body: data.body,
+      icon: '/icon.png',
+      badge: '/icon.png',
+      data: data.url,
+      actions: [
+        { action: 'open', title: 'Open App' },
+        { action: 'close', title: 'Close' }
+      ]
+    };
+
+    event.waitUntil(
+      self.registration.showNotification('CalSnap Update', options)
+    );
+  }
+});
+
+// Handle notification clicks
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  if (event.action === 'open') {
+    event.waitUntil(
+      clients.openWindow(event.notification.data || '/')
+    );
   }
 });

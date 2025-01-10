@@ -3,13 +3,24 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 
-// Only register service worker in production and if supported
+// Register service worker in production
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(error => {
-      // Silently handle service worker registration failure
-      console.debug('Service worker registration skipped:', error);
-    });
+  window.addEventListener('load', async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('/sw.js', {
+        scope: '/',
+        updateViaCache: 'none' // Disable SW cache for the script itself
+      });
+
+      // Log successful registration
+      console.log('ServiceWorker registered:', registration.scope);
+
+      // Immediately check for updates
+      registration.update();
+
+    } catch (error) {
+      console.error('ServiceWorker registration failed:', error);
+    }
   });
 }
 
