@@ -35,11 +35,11 @@ export function ScreenshotGallery() {
             transition={{ delay: index * 0.1 }}
             className="flex-none w-[280px] snap-center"
           >
-            <div className="relative w-full aspect-[9/16] rounded-3xl overflow-hidden bg-gray-100 dark:bg-gray-800">
+            <div className="relative w-full rounded-3xl overflow-hidden bg-gray-800">
               <img
                 src={screenshot.src}
                 alt={screenshot.alt}
-                className="w-full h-full object-cover"
+                className="w-full h-[500px] sm:h-[1114px] object-cover object-top"
               />
             </div>
           </motion.div>

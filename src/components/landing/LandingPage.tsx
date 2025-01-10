@@ -28,7 +28,7 @@ export function LandingPage() {
   }, [showToast]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-900">
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700">
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:3rem_3rem]" />
@@ -41,11 +41,11 @@ export function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               className="flex justify-center mb-6"
             >
-<img 
-               src="/icon.png" 
+              <img 
+                src="/icon.png" 
                 alt="CalSnap Icon" 
                 className="w-32 h-32 rounded-[2rem] shadow-2xl" 
-           />
+              />
             </motion.div>
 
             <motion.h1
@@ -94,22 +94,33 @@ export function LandingPage() {
       <div className="py-12">
         <div className="container mx-auto px-4">
           <ScreenshotGallery />
+          
+          {/* Description Section - More compact and integrated */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-2xl mx-auto mt-12 text-center px-4"
+          >
+            <p className="text-white leading-relaxed">
+              Say goodbye to complicated calorie counting! CalSnap uses cutting-edge AI to instantly recognize your food and track your calories. Level up your nutrition game with fun achievements, insightful progress tracking, and personalized meal suggestions. Join thousands of users who are crushing their fitness goals with CalSnap. Ready to make healthy living fun and effortless? Let's get started! ✨
+            </p>
+          </motion.div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+      <footer className="bg-gray-800 border-t border-gray-700">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col sm:flex-row justify-between items-center">
-            <div className="flex items-center space-x-2 mb-4 sm:mb-0">
+          <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+            <div className="flex items-center space-x-2">
               <img src="/icon.png" alt="CalSnap" className="w-8 h-8" />
-              <span className="text-gray-900 dark:text-white font-medium">CalSnap</span>
+              <span className="text-white font-medium">CalSnap</span>
             </div>
-            <div className="flex items-center space-x-4">
-              <a href="#privacy" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+            <div className="flex flex-wrap justify-center sm:justify-end items-center gap-4">
+              <a href="#privacy" className="text-sm text-gray-400 hover:text-gray-200">
                 Privacy Policy
               </a>
-              <a href="#terms" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+              <a href="#terms" className="text-sm text-gray-400 hover:text-gray-200">
                 Terms of Service
               </a>
             </div>
