@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeToggle } from './components/ThemeToggle';
 import { BottomNav } from './components/BottomNav';
 import { HomeTab } from './components/tabs/HomeTab';
@@ -17,13 +17,10 @@ import { InstallDrawer } from './components/pwa/InstallDrawer';
 import { usePWAUpdater } from './hooks/usePWAUpdater';
 import { LandingPage } from './components/landing/LandingPage';
 
-function AppContent() {
-  const [activeTab, setActiveTab] = useState('home');
-  const { newAchievement, clearAchievement } = useAchievementNotification();
+// Protected route component
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   
-  usePWAUpdater();
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -35,6 +32,15 @@ function AppContent() {
   if (!user) {
     return <AuthForm />;
   }
+
+  return <>{children}</>;
+}
+
+// Main app content component
+function AppContent() {
+  const [activeTab, setActiveTab] = useState('home');
+  const { newAchievement, clearAchievement } = useAchievementNotification();
+  usePWAUpdater();
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
@@ -67,8 +73,18 @@ export default function App() {
       <ToastProvider>
         <BrowserRouter>
           <Routes>
+            {/* Public routes */}
             <Route path="/install" element={<LandingPage />} />
-            <Route path="/*" element={<AppContent />} />
+            
+            {/* Protected routes */}
+            <Route path="/" element={
+              <ProtectedRoute>
+                <AppContent />
+              </ProtectedRoute>
+            } />
+            
+            {/* Catch all route */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
       </ToastProvider>
