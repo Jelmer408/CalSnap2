@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeToggle } from './components/ThemeToggle';
 import { BottomNav } from './components/BottomNav';
 import { HomeTab } from './components/tabs/HomeTab';
@@ -13,14 +15,13 @@ import { AuthForm } from './components/auth/AuthForm';
 import { useAuth } from './providers/AuthProvider';
 import { InstallDrawer } from './components/pwa/InstallDrawer';
 import { usePWAUpdater } from './hooks/usePWAUpdater';
-import { useState } from 'react';
+import { LandingPage } from './components/landing/LandingPage';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('home');
   const { newAchievement, clearAchievement } = useAchievementNotification();
   const { user, loading } = useAuth();
   
-  // Initialize PWA updater
   usePWAUpdater();
 
   if (loading) {
@@ -64,7 +65,12 @@ export default function App() {
   return (
     <AuthProvider>
       <ToastProvider>
-        <AppContent />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/install" element={<LandingPage />} />
+            <Route path="/*" element={<AppContent />} />
+          </Routes>
+        </BrowserRouter>
       </ToastProvider>
     </AuthProvider>
   );

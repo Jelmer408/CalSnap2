@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../providers/AuthProvider';
 import { AuthHeader } from './AuthHeader';
@@ -13,9 +13,31 @@ export function AuthForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(true);
   
   const { signIn, signUp } = useAuth();
   const { showToast } = useToastContext();
+
+  useEffect(() => {
+    // Check if we're in PWA mode and have stored credentials
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+    if (isPWA) {
+      const storedAuthState = localStorage.getItem('authState');
+      if (storedAuthState) {
+        const { isAuthenticated, timestamp } = JSON.parse(storedAuthState);
+        const hoursSinceAuth = (Date.now() - timestamp) / (1000 * 60 * 60);
+        
+        // If authenticated less than 24 hours ago, try to restore session
+        if (isAuthenticated && hoursSinceAuth < 24) {
+          const storedEmail = localStorage.getItem('lastEmail');
+          if (storedEmail) {
+            setEmail(storedEmail);
+          }
+        }
+      }
+    }
+    setIsRestoring(false);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,9 +46,12 @@ export function AuthForm() {
     try {
       if (isLogin) {
         await signIn(email, password);
+        // Store email for PWA persistence
+        localStorage.setItem('lastEmail', email);
         showToast('Welcome back!');
       } else {
         await signUp(email, password);
+        localStorage.setItem('lastEmail', email);
         showToast('Account created successfully!');
       }
     } catch (error) {
@@ -35,6 +60,14 @@ export function AuthForm() {
       setLoading(false);
     }
   };
+
+  if (isRestoring) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gray-900">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-900">

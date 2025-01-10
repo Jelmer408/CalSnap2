@@ -1,20 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSettingsStore } from '../../store/settingsStore';
+import { useToastContext } from '../../providers/ToastProvider';
 
-export interface UserMetrics {
-  weight: number;
-  weightUnit: 'kg' | 'lbs';
-  height: number;
-  heightUnit: 'cm' | 'ft';
-  age: number;
-  sex: 'male' | 'female' | 'other';
-}
+export function UserMetricsSection() {
+  const { metrics, updateMetrics, syncWithSupabase } = useSettingsStore();
+  const { showToast } = useToastContext();
+  const [loading, setLoading] = useState(true);
 
-interface Props {
-  metrics: UserMetrics;
-  onChange: (metrics: UserMetrics) => void;
-}
-
-export function UserMetricsSection({ metrics, onChange }: Props) {
   // Local state to handle input values
   const [localMetrics, setLocalMetrics] = useState({
     weight: metrics.weight ? metrics.weight.toString() : '',
@@ -22,18 +14,42 @@ export function UserMetricsSection({ metrics, onChange }: Props) {
     age: metrics.age ? metrics.age.toString() : ''
   });
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await syncWithSupabase();
+        setLocalMetrics({
+          weight: metrics.weight ? metrics.weight.toString() : '',
+          height: metrics.height ? metrics.height.toString() : '',
+          age: metrics.age ? metrics.age.toString() : ''
+        });
+      } catch (error) {
+        showToast('Failed to fetch user metrics', 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [syncWithSupabase, metrics, showToast]);
+
   // Handle input changes
-  const handleInputChange = (field: keyof typeof localMetrics, value: string) => {
+  const handleInputChange = async (field: keyof typeof localMetrics, value: string) => {
     setLocalMetrics(prev => ({ ...prev, [field]: value }));
     
     // Only update the store if the value is valid
     if (value && !isNaN(Number(value))) {
-      onChange({
-        ...metrics,
-        [field]: Number(value)
-      });
+      try {
+        await updateMetrics({ [field]: Number(value) });
+      } catch (error) {
+        showToast('Failed to update metric', 'error');
+      }
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl overflow-hidden">
@@ -56,7 +72,7 @@ export function UserMetricsSection({ metrics, onChange }: Props) {
             />
             <select
               value={metrics.weightUnit}
-              onChange={(e) => onChange({ ...metrics, weightUnit: e.target.value as 'kg' | 'lbs' })}
+              onChange={(e) => updateMetrics({ weightUnit: e.target.value as 'kg' | 'lbs' })}
               className="bg-transparent text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
             >
               <option value="kg">kg</option>
@@ -79,7 +95,7 @@ export function UserMetricsSection({ metrics, onChange }: Props) {
             />
             <select
               value={metrics.heightUnit}
-              onChange={(e) => onChange({ ...metrics, heightUnit: e.target.value as 'cm' | 'ft' })}
+              onChange={(e) => updateMetrics({ heightUnit: e.target.value as 'cm' | 'ft' })}
               className="bg-transparent text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
             >
               <option value="cm">cm</option>
@@ -110,7 +126,7 @@ export function UserMetricsSection({ metrics, onChange }: Props) {
           <div className="ml-auto">
             <select
               value={metrics.sex}
-              onChange={(e) => onChange({ ...metrics, sex: e.target.value as 'male' | 'female' | 'other' })}
+              onChange={(e) => updateMetrics({ sex: e.target.value as 'male' | 'female' | 'other' })}
               className="bg-transparent text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
             >
               <option value="male">Male</option>
