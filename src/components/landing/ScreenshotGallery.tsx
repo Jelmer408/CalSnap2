@@ -2,22 +2,22 @@ import { motion } from 'framer-motion';
 
 const screenshots = [
   {
-    src: '/public/screenshots/preview-1.png',
+    src: '/screenshots/preview-1.png',
     alt: 'Track your daily calories',
     title: 'Track Daily Calories'
   },
   {
-    src: '/public/screenshots/preview-2.png',
+    src: '/screenshots/preview-2.png',
     alt: 'AI-powered food recognition',
     title: 'Smart Food Recognition'
   },
   {
-    src: '/public/screenshots/preview-3.png',
+    src: '/screenshots/preview-3.png',
     alt: 'Achievement system',
     title: 'Earn Achievements'
   },
   {
-    src: '/public/screenshots/preview-4.png',
+    src: '/screenshots/preview-4.png',
     alt: 'Progress tracking',
     title: 'Track Progress'
   }

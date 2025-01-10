@@ -11,7 +11,7 @@ export default defineConfig({
         name: "Calorie Tracker",
         short_name: "CalSnap",
         description: "Track your daily calorie intake",
-        version: "1.0.1",
+        version: "1.0.2",
         start_url: "/",
         display: "standalone",
         background_color: "#111827",

@@ -41,9 +41,11 @@ export function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               className="flex justify-center mb-6"
             >
-              <div className="w-20 h-20 rounded-[1.5rem] bg-white shadow-2xl flex items-center justify-center">
-                <img src="/icon.png" alt="CalSnap Icon" className="w-16 h-16" />
-              </div>
+<img 
+               src="/icon.png" 
+                alt="CalSnap Icon" 
+                className="w-32 h-32 rounded-[2rem] shadow-2xl" 
+           />
             </motion.div>
 
             <motion.h1
