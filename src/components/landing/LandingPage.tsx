@@ -99,10 +99,23 @@ export function LandingPage() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl mx-auto mt-12 text-center px-4"
+            className="max-w-3xl mx-auto mt-12 text-center px-4 space-y-4"
           >
-            <p className="text-white leading-relaxed">
-              Say goodbye to complicated calorie counting! CalSnap uses cutting-edge AI to instantly recognize your food and track your calories. Level up your nutrition game with fun achievements, insightful progress tracking, and personalized meal suggestions. Join thousands of users who are crushing their fitness goals with CalSnap. Ready to make healthy living fun and effortless? Let's get started! ✨
+            <p className="text-white text-lg leading-relaxed">
+              Meet <strong className="text-blue-400">CalSnap</strong>, your new AI-powered food tracking buddy! 
+              <br/>
+              Snap a pic, and let our smart tech log your meals in a flash. 📸
+            </p>
+            <p className="text-white text-lg leading-relaxed">
+              But that's not all! 
+              <br/>
+              Smash your fitness goals with personalized meal plans, fun achievements, and insightful progress reports. 
+            </p>
+            <p className="text-white text-lg leading-relaxed">
+              Stay motivated with streaks, level up your nutrition game, and watch those gains (or losses!) roll in.
+              </p>
+						<p className="text-white text-lg leading-relaxed">
+              Join the CalSnap fam and turn your fitness journey into an epic adventure! 🎉
             </p>
           </motion.div>
         </div>
