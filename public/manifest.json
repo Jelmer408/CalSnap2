@@ -1,45 +1,77 @@
 {
-      "name": "CalSnap",
-      "short_name": "CalSnap",
-      "description": "Track your daily calorie intake with AI-powered food recognition. Achieve your fitness goals with CalSnap.",
-      "version": "1.6.1",
-      "id": "calsnap-pwa",
-      "start_url": "/",
-      "display": "standalone",
-      "background_color": "#111827",
-      "theme_color": "#111827",
-      "icons": [
-        {
-          "src": "/icon.png",
-          "sizes": "192x192",
-          "type": "image/png",
-          "purpose": "any"
-        },
-        {
-          "src": "/maskable_icon_192x192.png",
-          "sizes": "192x192",
-          "type": "image/png",
-          "purpose": "maskable"
-        },
-        {
-          "src": "/icon.png",
-          "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "any"
-        }
-      ],
-      "categories": [
-        "health",
-        "fitness",
-        "food"
-      ],
-      "dir": "auto",
-      "lang": "en-US",
-      "orientation": "portrait",
-      "iarc_rating_id": "e1948f0e-9507-478e-b75e-944c77d97452",
-      "prefer_related_applications": false,
-      "related_applications": [],
-      "scope": "/",
-      "scope_extensions": [],
-      "screenshots": []
+  "name": "CalSnap",
+  "short_name": "CalSnap",
+  "description": "Track your daily calorie intake with AI-powered food recognition. Achieve your fitness goals with CalSnap.",
+  "version": "1.5.1",
+  "id": "calsnap-pwa",
+  "display_override": [
+    "window-controls-overlay"
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/maskable_icon_192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
+  ],
+  "categories": [
+    "health",
+    "fitness",
+    "food"
+  ],
+  "dir": "auto",
+  "lang": "en-US",
+  "orientation": "portrait",
+  "iarc_rating_id": "e1948f0e-9507-478e-b75e-944c77d97452",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "scope": "/",
+  "scope_extensions": [],
+  "screenshots": [
+    {
+      "src": "/screenshots/preview-1.png",
+      "sizes": "1280x2778",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/preview-2.png",
+      "sizes": "1280x2778",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/preview-3.png",
+      "sizes": "1280x2778",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/preview-4.png",
+      "sizes": "1280x2778",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ]
+
+	  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+}
