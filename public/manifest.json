@@ -70,8 +70,4 @@
       "form_factor": "narrow"
     }
   ]
-
-	  "launch_handler": {
-    "client_mode": "navigate-existing"
-  }
 }
