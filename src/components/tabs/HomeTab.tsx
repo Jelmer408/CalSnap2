@@ -16,9 +16,9 @@ import { isSameDay } from 'date-fns';
 export function HomeTab() {
   const { entries, dailyGoal, removeEntry } = useCalorieStore();
   const { selectedDate, goToNextDay, goToPreviousDay } = useDateStore();
-  useCalorieSync(); // Add this line to sync calories
+  useCalorieSync();
   
-  const { handleTouchStart, handleTouchEnd } = useSwipeNavigation({
+  const { handleTouchStart, handleTouchMove, handleTouchEnd } = useSwipeNavigation({
     onSwipeLeft: goToNextDay,
     onSwipeRight: goToPreviousDay,
     threshold: 50
@@ -39,8 +39,9 @@ export function HomeTab() {
 
   return (
     <div 
-      className="space-y-6 pb-24 pt-4"
+      className="space-y-6 pb-32 pt-4"
       onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       <DateNavigator />

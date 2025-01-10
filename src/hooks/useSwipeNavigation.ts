@@ -12,13 +12,24 @@ export function useSwipeNavigation({
   threshold = 50 
 }: SwipeConfig) {
   const touchStart = useRef<number | null>(null);
+  const isScrolling = useRef(false);
 
   const handleTouchStart = useCallback((e: TouchEvent) => {
+    isScrolling.current = false;
     touchStart.current = e.touches[0].clientX;
   }, []);
 
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (e.target instanceof Element) {
+      const element = e.target.closest('.overflow-x-auto');
+      if (element) {
+        isScrolling.current = true;
+      }
+    }
+  }, []);
+
   const handleTouchEnd = useCallback((e: TouchEvent) => {
-    if (touchStart.current === null) return;
+    if (touchStart.current === null || isScrolling.current) return;
 
     const touchEnd = e.changedTouches[0].clientX;
     const distance = touchEnd - touchStart.current;
@@ -36,6 +47,7 @@ export function useSwipeNavigation({
 
   return {
     handleTouchStart,
+    handleTouchMove,
     handleTouchEnd
   };
 }

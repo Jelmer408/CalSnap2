@@ -11,7 +11,7 @@ export function MealPrepTab() {
 
   return (
     <>
-      <div className="space-y-8 pb-24">
+      <div className="space-y-8 pb-32">
         {/* Header Card */}
         <div className="relative overflow-hidden bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 rounded-3xl p-8">
           {/* Background Effects */}

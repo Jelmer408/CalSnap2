@@ -31,6 +31,11 @@ export function MealSuggestions() {
     }
   };
 
+  // Stop swipe event propagation when interacting with suggestions
+  const handleSuggestionTouch = (e: React.TouchEvent) => {
+    e.stopPropagation();
+  };
+
   if (suggestions.length === 0 && !isLoading) return null;
 
   return (
@@ -54,7 +59,12 @@ export function MealSuggestions() {
           <Loader2 className="w-5 h-5 animate-spin text-blue-200" />
         </div>
       ) : (
-        <div className="flex overflow-x-auto pb-2 -mx-4 px-4 space-x-2">
+        <div 
+          className="flex overflow-x-auto pb-2 -mx-4 px-4 space-x-2"
+          onTouchStart={handleSuggestionTouch}
+          onTouchMove={handleSuggestionTouch}
+          onTouchEnd={handleSuggestionTouch}
+        >
           {suggestions.map((suggestion) => (
             <motion.button
               key={`${suggestion.name}-${suggestion.isHistorical ? 'hist' : 'ai'}`}

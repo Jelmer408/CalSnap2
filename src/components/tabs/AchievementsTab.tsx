@@ -23,7 +23,7 @@ export function AchievementsTab() {
   const progress = (unlockedAchievements.length / totalAchievements) * 100;
 
   return (
-    <div className="space-y-6 mb-20">
+    <div className="space-y-6 pb-32">
       {/* Weight Goal Section */}
       <WeightGoalSection />
       
