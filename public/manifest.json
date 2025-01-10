@@ -1,7 +1,8 @@
 {
   "name": "CalSnap",
-  "short_name": "Calories",
+  "short_name": "CalSnap",
   "description": "Track your daily calorie intake",
+  "version": "1.0.1",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#111827",

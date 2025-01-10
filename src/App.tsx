@@ -12,12 +12,16 @@ import { Header } from './components/Header';
 import { AuthForm } from './components/auth/AuthForm';
 import { useAuth } from './providers/AuthProvider';
 import { InstallDrawer } from './components/pwa/InstallDrawer';
+import { usePWAUpdater } from './hooks/usePWAUpdater';
 import { useState } from 'react';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('home');
   const { newAchievement, clearAchievement } = useAchievementNotification();
   const { user, loading } = useAuth();
+  
+  // Initialize PWA updater
+  usePWAUpdater();
 
   if (loading) {
     return (
