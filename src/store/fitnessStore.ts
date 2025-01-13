@@ -3,6 +3,10 @@ import { supabase } from '../lib/supabase/client';
 import { calculateTargetDate, validateWeightGoal } from '../lib/fitness/goalCalculator';
 import type { WeightEntry } from '../lib/supabase/types/fitness';
 import { useToastContext } from '../providers/ToastProvider';
+import { calculateBMR } from '../lib/calculations/bmr';
+import { calculateTDEE } from '../lib/calculations/tdee';
+import { adjustForGoal } from '../lib/calculations/goalAdjustment';
+import { useSettingsStore } from './settingsStore';
 
 interface FitnessState {
   entries: WeightEntry[];
@@ -74,6 +78,65 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
     }
   },
 
+  addEntry: async (entry) => {
+    try {
+      set({ error: null });
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      // Get user settings for calorie calculation
+      const { data: settings, error: settingsError } = await supabase
+        .from('user_settings')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (settingsError) throw settingsError;
+
+      // Calculate new daily calorie goal based on updated weight
+      const bmr = calculateBMR(
+        entry.weight,
+        settings.weight_unit,
+        settings.height,
+        settings.height_unit,
+        settings.age,
+        settings.sex
+      );
+
+      const tdee = calculateTDEE(bmr, settings.activity_level);
+      const adjustedCalories = adjustForGoal(tdee, settings.goal_type, settings.weight_rate);
+
+      // Insert weight entry
+      const { data, error } = await supabase
+        .from('weight_entries')
+        .insert([{
+          ...entry,
+          user_id: user.id
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Update user's daily calorie goal
+      const { error: updateError } = await supabase
+        .from('user_settings')
+        .update({ daily_goal: adjustedCalories })
+        .eq('user_id', user.id);
+
+      if (updateError) throw updateError;
+
+      set(state => ({
+        entries: [data, ...state.entries]
+      }));
+
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to add weight entry';
+      set({ error: message });
+      throw error;
+    }
+  },
+
   setTargetWeight: async (weight) => {
     try {
       set({ error: null });
@@ -119,33 +182,6 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to update target weight';
-      set({ error: message });
-      throw error;
-    }
-  },
-
-  addEntry: async (entry) => {
-    try {
-      set({ error: null });
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
-
-      const { data, error } = await supabase
-        .from('weight_entries')
-        .insert([{
-          ...entry,
-          user_id: user.id
-        }])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      set(state => ({
-        entries: [data, ...state.entries]
-      }));
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to add weight entry';
       set({ error: message });
       throw error;
     }
