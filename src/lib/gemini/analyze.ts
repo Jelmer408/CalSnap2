@@ -3,6 +3,16 @@ import { FoodAnalysis, GeminiResponse } from './types';
 import { parseGeminiResponse } from './parser';
 import { validateGeminiResponse } from './validators/responseValidators';
 
+let modelInstance = model;
+
+// Function to ensure model is initialized
+function ensureModel() {
+  if (!modelInstance) {
+    modelInstance = model;
+  }
+  return modelInstance;
+}
+
 export async function analyzeFoodImage(imageData: string): Promise<FoodAnalysis | null> {
   try {
     // Ensure we have a proper base64 string
@@ -15,7 +25,10 @@ export async function analyzeFoodImage(imageData: string): Promise<FoodAnalysis 
       throw new Error('Invalid image data');
     }
 
-    const result = await model.generateContent([
+    // Ensure model is initialized
+    const currentModel = ensureModel();
+
+    const result = await currentModel.generateContent([
       {
         inlineData: {
           mimeType: "image/jpeg",
@@ -52,6 +65,6 @@ export async function analyzeFoodImage(imageData: string): Promise<FoodAnalysis 
     if (error instanceof Error) {
       console.error('Error details:', error.message);
     }
-    return null;
+    throw error; // Re-throw to be handled by the hook
   }
 }
