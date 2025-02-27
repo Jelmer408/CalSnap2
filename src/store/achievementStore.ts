@@ -56,11 +56,17 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
         ...achievements.find(a => a.id === record.achievement_id)!,
         unlockedAt: record.unlocked_at
       })).filter(Boolean);
+      
+      // Calculate total points based on the predefined achievements data
+      const totalPoints = unlockedAchievements.reduce(
+        (sum, achievement) => sum + achievement.points, 
+        0
+      );
 
       set({
         unlockedAchievements,
-        points: achievementsData.reduce((sum, a) => sum + a.points, 0),
-        level: Math.floor(achievementsData.reduce((sum, a) => sum + a.points, 0) / 100) + 1,
+        points: totalPoints,
+        level: Math.floor(totalPoints / 100) + 1,
         streak: streakData ? {
           current: streakData.current_streak,
           longest: streakData.longest_streak,
@@ -109,7 +115,6 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
             newAchievements.map(achievement => ({
               user_id: user.id,
               achievement_id: achievement.id,
-              points: achievement.points,
               unlocked_at: new Date().toISOString()
             }))
           );
